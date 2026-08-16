@@ -1,0 +1,2281 @@
+<!DOCTYPE html>
+
+<html lang="uk">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        WhatsApp Forwarder
+    </title>
+
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+
+            margin: 0;
+
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+
+            background: #f4f6f8;
+
+            color: #1f2937;
+        }
+
+
+        /* ======================================
+           ШАПКА
+           ====================================== */
+
+        header {
+
+            background: #1f2937;
+
+            color: white;
+
+            padding: 22px 30px;
+        }
+
+
+        header h1 {
+
+            margin: 0;
+
+            font-size: 25px;
+        }
+
+
+        header p {
+
+            margin: 6px 0 0;
+
+            opacity: 0.75;
+        }
+
+
+        /* ======================================
+           ОСНОВНИЙ КОНТЕЙНЕР
+           ====================================== */
+
+        .container {
+
+            max-width: 1250px;
+
+            margin: 25px auto;
+
+            padding: 0 20px;
+        }
+
+
+        /* ======================================
+           СТАТУСИ
+           ====================================== */
+
+        .status-panel {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 15px;
+
+            margin-bottom: 25px;
+        }
+
+
+        .status-card {
+
+            background: white;
+
+            border-radius: 12px;
+
+            padding: 20px;
+
+            box-shadow:
+                0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+
+        .status-title {
+
+            font-size: 13px;
+
+            color: #6b7280;
+
+            margin-bottom: 8px;
+        }
+
+
+        .status-value {
+
+            font-size: 21px;
+
+            font-weight: 700;
+        }
+
+
+        /* ======================================
+           СЕКЦІЇ
+           ====================================== */
+
+        .section {
+
+            background: white;
+
+            border-radius: 12px;
+
+            padding: 22px;
+
+            margin-bottom: 25px;
+
+            box-shadow:
+                0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+
+        .section-header {
+
+            display: flex;
+
+            justify-content:
+                space-between;
+
+            align-items: center;
+
+            margin-bottom: 20px;
+        }
+
+
+        .section-header h2 {
+
+            margin: 0;
+
+            font-size: 19px;
+        }
+
+
+        /* ======================================
+           КНОПКИ
+           ====================================== */
+
+        button {
+
+            border: none;
+
+            border-radius: 7px;
+
+            padding: 9px 14px;
+
+            cursor: pointer;
+
+            font-size: 14px;
+
+            transition:
+                opacity 0.15s;
+        }
+
+
+        button:hover {
+
+            opacity: 0.85;
+        }
+
+
+        .button-primary {
+
+            background: #2563eb;
+
+            color: white;
+        }
+
+
+        .button-secondary {
+
+            background: #e5e7eb;
+
+            color: #111827;
+        }
+
+
+        .button-success {
+
+            background: #16a34a;
+
+            color: white;
+        }
+
+
+        .button-warning {
+
+            background: #f59e0b;
+
+            color: white;
+        }
+
+
+        .button-danger {
+
+            background: #dc2626;
+
+            color: white;
+        }
+
+
+        /* ======================================
+           ФОРМА
+           ====================================== */
+
+        .form-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr auto;
+
+            gap: 15px;
+
+            align-items: end;
+        }
+
+
+        label {
+
+            display: block;
+
+            font-size: 13px;
+
+            font-weight: 600;
+
+            margin-bottom: 7px;
+        }
+
+
+        select {
+
+            width: 100%;
+
+            padding: 11px;
+
+            border:
+                1px solid #d1d5db;
+
+            border-radius: 7px;
+
+            background: white;
+
+            font-size: 14px;
+        }
+
+
+        /* ======================================
+           ПРАВИЛО
+           ====================================== */
+
+        .rule {
+
+            border:
+                1px solid #e5e7eb;
+
+            border-radius: 10px;
+
+            padding: 16px;
+
+            margin-bottom: 12px;
+
+            display: grid;
+
+            grid-template-columns:
+                minmax(180px, 1fr) 40px minmax(180px, 1fr) auto;
+
+            gap: 12px;
+
+            align-items: center;
+        }
+
+
+        .rule-source,
+        .rule-target {
+
+            min-width: 0;
+        }
+
+
+        .group-name {
+
+            font-size: 15px;
+
+            font-weight: 700;
+        }
+
+
+        .group-members {
+
+            font-size: 12px;
+
+            color: #6b7280;
+
+            margin-top: 4px;
+        }
+
+
+        .arrow {
+
+            text-align: center;
+
+            font-size: 25px;
+
+            color: #374151;
+        }
+
+
+        .rule-status {
+
+            font-weight: 600;
+
+            margin-bottom: 8px;
+
+            text-align: center;
+        }
+
+
+        .status-enabled {
+
+            color: #15803d;
+        }
+
+
+        .status-disabled {
+
+            color: #9ca3af;
+        }
+
+
+        .rule-actions {
+
+            display: flex;
+
+            gap: 6px;
+
+            flex-wrap: wrap;
+
+            justify-content: flex-end;
+        }
+
+
+        .rule-actions button {
+
+            font-size: 12px;
+
+            padding:
+                7px 10px;
+        }
+
+
+        /* ======================================
+           ГРУПИ
+           ====================================== */
+
+        .groups-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
+            gap: 12px;
+        }
+
+
+        .group-card {
+
+            border:
+                1px solid #e5e7eb;
+
+            border-radius: 9px;
+
+            padding: 15px;
+        }
+
+
+        .group-card .group-name {
+
+            margin-bottom: 6px;
+        }
+
+
+        .group-card .members {
+
+            font-size: 12px;
+
+            color: #6b7280;
+        }
+
+
+        /* ======================================
+           ПОВІДОМЛЕННЯ
+           ====================================== */
+
+        .message {
+
+            padding: 12px 15px;
+
+            border-radius: 8px;
+
+            margin-bottom: 15px;
+
+            display: none;
+        }
+
+
+        .message.success {
+
+            display: block;
+
+            background: #dcfce7;
+
+            color: #166534;
+        }
+
+
+        .message.error {
+
+            display: block;
+
+            background: #fee2e2;
+
+            color: #991b1b;
+        }
+
+
+        /* ======================================
+           МОДАЛЬНЕ ВІКНО
+           ====================================== */
+
+        .modal {
+
+            display: none;
+
+            position: fixed;
+
+            inset: 0;
+
+            background:
+                rgba(0, 0, 0, 0.45);
+
+            align-items: center;
+
+            justify-content: center;
+
+            padding: 20px;
+
+            z-index: 1000;
+        }
+
+
+        .modal.active {
+
+            display: flex;
+        }
+
+
+        .modal-content {
+
+            background: white;
+
+            width: 100%;
+
+            max-width: 600px;
+
+            border-radius: 12px;
+
+            padding: 25px;
+
+            box-shadow:
+                0 10px 40px rgba(0, 0, 0, 0.25);
+        }
+
+
+        .modal-content h2 {
+
+            margin-top: 0;
+        }
+
+
+        .modal-actions {
+
+            display: flex;
+
+            justify-content: flex-end;
+
+            gap: 10px;
+
+            margin-top: 20px;
+        }
+
+
+        .empty {
+
+            text-align: center;
+
+            color: #6b7280;
+
+            padding: 30px;
+        }
+/* ======================================
+   ЖУРНАЛ ПЕРЕСИЛАНЬ
+   ====================================== */
+
+.log-entry {
+
+    border:
+        1px solid #e5e7eb;
+
+    border-radius: 9px;
+
+    padding: 14px;
+
+    margin-bottom: 10px;
+
+    background: #fafafa;
+}
+
+
+.log-header {
+
+    display: flex;
+
+    justify-content:
+        space-between;
+
+    align-items: center;
+
+    margin-bottom: 7px;
+}
+
+
+.log-time {
+
+    font-size: 12px;
+
+    color: #6b7280;
+}
+
+
+.log-success {
+
+    color: #15803d;
+
+    font-weight: 700;
+}
+
+
+.log-error {
+
+    color: #dc2626;
+
+    font-weight: 700;
+}
+
+
+.log-route {
+
+    font-weight: 700;
+
+    margin-bottom: 6px;
+}
+
+
+.log-sender {
+
+    font-size: 13px;
+
+    color: #4b5563;
+
+    margin-bottom: 5px;
+}
+
+
+.log-text {
+
+    font-size: 14px;
+
+    background: white;
+
+    border-radius: 6px;
+
+    padding: 8px;
+
+    word-break: break-word;
+}
+
+        /* ======================================
+           АДАПТАЦІЯ
+           ====================================== */
+
+        @media (max-width: 900px) {
+
+            .status-panel {
+
+                grid-template-columns:
+                    1fr;
+            }
+
+
+            .form-grid {
+
+                grid-template-columns:
+                    1fr;
+            }
+
+
+            .groups-grid {
+
+                grid-template-columns:
+                    1fr;
+            }
+
+
+            .rule {
+
+                grid-template-columns:
+                    1fr;
+            }
+
+
+            .arrow {
+
+                transform:
+                    rotate(90deg);
+            }
+
+
+            .rule-status {
+
+                text-align: left;
+            }
+
+
+            .rule-actions {
+
+                justify-content:
+                    flex-start;
+            }
+
+        }
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <header>
+
+        <h1>
+            WhatsApp Forwarder
+        </h1>
+
+        <p>
+            Керування автоматичним пересиланням повідомлень між групами
+        </p>
+
+    </header>
+
+
+    <div class="container">
+
+
+        <!-- ======================================
+         СТАН СИСТЕМИ
+         ====================================== -->
+
+        <div class="status-panel">
+
+
+            <div class="status-card">
+
+                <div class="status-title">
+                    WhatsApp
+                </div>
+
+                <div id="whatsappStatus" class="status-value">
+                    Перевірка...
+                </div>
+
+            </div>
+
+
+            <div class="status-card">
+
+                <div class="status-title">
+                    Доступні групи
+                </div>
+
+                <div id="groupsCount" class="status-value">
+                    0
+                </div>
+
+            </div>
+
+
+            <div class="status-card">
+
+                <div class="status-title">
+                    Активні правила
+                </div>
+
+                <div id="rulesCount" class="status-value">
+                    0
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div id="message" class="message"></div>
+
+
+        <!-- ======================================
+         ДОДАВАННЯ ПРАВИЛА
+         ====================================== -->
+
+        <div class="section">
+
+
+            <div class="section-header">
+
+                <h2>
+                    Додати правило пересилання
+                </h2>
+
+
+                <button class="button-secondary" onclick="loadGroups()">
+                    🔄 Оновити групи
+                </button>
+
+            </div>
+
+
+            <div class="form-grid">
+
+
+                <div>
+
+                    <label>
+                        Група-джерело
+                    </label>
+
+                    <select id="sourceGroup">
+
+                        <option value="">
+                            Оберіть групу
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div>
+
+                    <label>
+                        Група-отримувач
+                    </label>
+
+                    <select id="targetGroup">
+
+                        <option value="">
+                            Оберіть групу
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <button class="button-primary" onclick="addRule()">
+                    ➕ Додати
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- ======================================
+         ПРАВИЛА
+         ====================================== -->
+
+        <div class="section">
+
+
+            <div class="section-header">
+
+                <h2>
+                    Правила пересилання
+                </h2>
+
+
+                <button class="button-secondary" onclick="loadRules()">
+                    🔄 Оновити
+                </button>
+
+            </div>
+
+
+            <div id="rulesList">
+
+                <div class="empty">
+                    Завантаження...
+                </div>
+
+            </div>
+
+        </div>
+
+<!-- ======================================
+     СТАТИСТИКА
+     ====================================== -->
+
+<div class="section">
+
+    <div class="section-header">
+
+        <h2>
+            Статистика
+        </h2>
+
+        <button class="button-secondary" onclick="loadStatistics()">
+            🔄 Оновити
+        </button>
+
+    </div>
+
+
+    <div class="groups-grid">
+
+        <div class="group-card">
+
+            <div class="group-name">
+                📩 Повідомлень сьогодні
+            </div>
+
+            <div id="todayTotal" class="status-value">
+                0
+            </div>
+
+        </div>
+
+
+        <div class="group-card">
+
+            <div class="group-name">
+                ✅ Успішно переслано
+            </div>
+
+            <div id="todaySuccessful" class="status-value">
+                0
+            </div>
+
+        </div>
+
+
+        <div class="group-card">
+
+            <div class="group-name">
+                ❌ Помилок
+            </div>
+
+            <div id="todayErrors" class="status-value">
+                0
+            </div>
+
+        </div>
+
+
+        <div class="group-card">
+
+            <div class="group-name">
+                📊 Усього записів
+            </div>
+
+            <div id="totalLogs" class="status-value">
+                0
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ======================================
+     ЖУРНАЛ ПЕРЕСИЛАНЬ
+     ====================================== -->
+
+<div class="section">
+
+    <div class="section-header">
+
+        <h2>
+            📋 Журнал пересилань
+        </h2>
+
+
+        <button class="button-secondary" onclick="loadLogs()">
+            🔄 Оновити
+        </button>
+
+    </div>
+
+
+    <div id="logsList">
+
+        <div class="empty">
+            Завантаження...
+        </div>
+
+    </div>
+
+</div>
+
+        <!-- ======================================
+         ДОСТУПНІ ГРУПИ
+         ====================================== -->
+
+        <div class="section">
+
+
+            <div class="section-header">
+
+                <h2>
+                    Доступні групи WhatsApp
+                </h2>
+
+            </div>
+
+
+            <div id="groupsList" class="groups-grid">
+
+                <div class="empty">
+                    Завантаження...
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- ==========================================
+     МОДАЛЬНЕ ВІКНО РЕДАГУВАННЯ
+     ========================================== -->
+
+    <div id="editModal" class="modal">
+
+
+        <div class="modal-content">
+
+
+            <h2>
+                ✏️ Редагування правила
+            </h2>
+
+
+            <div>
+
+                <label>
+                    Група-джерело
+                </label>
+
+                <select id="editSource"></select>
+
+            </div>
+
+
+            <br>
+
+
+            <div>
+
+                <label>
+                    Група-отримувач
+                </label>
+
+                <select id="editTarget"></select>
+
+            </div>
+
+
+            <div class="modal-actions">
+
+                <button class="button-secondary" onclick="closeEditModal()">
+                    Скасувати
+                </button>
+
+
+                <button class="button-primary" onclick="saveEditedRule()">
+                    Зберегти
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+
+        let groups = [];
+
+        let rules = [];
+
+        let editingRuleId = null;
+
+
+        // ======================================
+        // ПОВІДОМЛЕННЯ
+        // ======================================
+
+        function showMessage(
+            text,
+            type = 'success'
+        ) {
+
+            const element =
+                document.getElementById(
+                    'message'
+                );
+
+
+            element.textContent =
+                text;
+
+
+            element.className =
+                `message ${type}`;
+
+
+            setTimeout(
+                () => {
+
+                    element.className =
+                        'message';
+
+                },
+                4000
+            );
+        }
+
+
+        // ======================================
+        // СТАН СИСТЕМИ
+        // ======================================
+
+        async function loadStatus() {
+
+            try {
+
+                const response =
+                    await fetch(
+                        '/api/status'
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                document.getElementById(
+                    'whatsappStatus'
+                ).textContent =
+                    data.connected
+                        ? '🟢 Підключено'
+                        : '🔴 Не підключено';
+
+
+                document.getElementById(
+                    'groupsCount'
+                ).textContent =
+                    data.groupsCount;
+
+
+                document.getElementById(
+                    'rulesCount'
+                ).textContent =
+                    data.activeRules;
+
+            } catch (error) {
+
+                console.error(
+                    error
+                );
+            }
+        }
+
+
+        // ======================================
+        // ЗАВАНТАЖЕННЯ ГРУП
+        // ======================================
+
+        async function loadGroups() {
+
+            try {
+
+                const response =
+                    await fetch(
+                        '/api/groups'
+                    );
+
+
+                groups =
+                    await response.json();
+
+
+                renderGroupSelectors();
+
+                renderGroups();
+
+                await loadRules();
+
+                await loadStatus();
+
+
+                showMessage(
+                    'Список груп оновлено.'
+                );
+
+            } catch (error) {
+
+                console.error(
+                    error
+                );
+
+
+                showMessage(
+                    'Не вдалося отримати список груп.',
+                    'error'
+                );
+            }
+        }
+
+
+        // ======================================
+        // СПИСКИ ВИБОРУ
+        // ======================================
+
+        function fillSelect(
+            element,
+            selected = ''
+        ) {
+
+            element.innerHTML =
+                '<option value="">Оберіть групу</option>';
+
+
+            groups.forEach(
+                group => {
+
+                    const option =
+                        document.createElement(
+                            'option'
+                        );
+
+
+                    option.value =
+                        group.id;
+
+
+                    option.textContent =
+                        group.name;
+
+
+                    if (
+                        group.id ===
+                        selected
+                    ) {
+
+                        option.selected =
+                            true;
+                    }
+
+
+                    element.appendChild(
+                        option
+                    );
+                }
+            );
+        }
+
+
+        function renderGroupSelectors() {
+
+            fillSelect(
+                document.getElementById(
+                    'sourceGroup'
+                )
+            );
+
+
+            fillSelect(
+                document.getElementById(
+                    'targetGroup'
+                )
+            );
+        }
+
+
+        // ======================================
+        // ГРУПИ
+        // ======================================
+
+        function renderGroups() {
+
+            const container =
+                document.getElementById(
+                    'groupsList'
+                );
+
+
+            if (
+                !groups.length
+            ) {
+
+                container.innerHTML =
+                    '<div class="empty">Групи не знайдено</div>';
+
+                return;
+            }
+
+
+            container.innerHTML =
+                '';
+
+
+            groups.forEach(
+                group => {
+
+                    const element =
+                        document.createElement(
+                            'div'
+                        );
+
+
+                    element.className =
+                        'group-card';
+
+
+                    element.innerHTML = `
+
+                    <div class="group-name">
+                        ${escapeHtml(group.name)}
+                    </div>
+
+                    <div class="members">
+                        👥 Учасників:
+                        ${group.participants}
+                    </div>
+
+                `;
+
+
+                    container.appendChild(
+                        element
+                    );
+                }
+            );
+        }
+
+
+        // ======================================
+        // ДОДАВАННЯ ПРАВИЛА
+        // ======================================
+
+        async function addRule() {
+
+            const source =
+                document.getElementById(
+                    'sourceGroup'
+                ).value;
+
+
+            const target =
+                document.getElementById(
+                    'targetGroup'
+                ).value;
+
+
+            if (
+                !source ||
+                !target
+            ) {
+
+                showMessage(
+                    'Оберіть групу-джерело та групу-отримувач.',
+                    'error'
+                );
+
+                return;
+            }
+
+
+            if (
+                source === target
+            ) {
+
+                showMessage(
+                    'Група-джерело та група-отримувач не можуть бути однаковими.',
+                    'error'
+                );
+
+                return;
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        '/api/rules',
+                        {
+
+                            method:
+                                'POST',
+
+                            headers: {
+                                'Content-Type':
+                                    'application/json'
+                            },
+
+                            body:
+                                JSON.stringify({
+                                    source,
+                                    target
+                                })
+
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    !response.ok
+                ) {
+
+                    throw new Error(
+                        data.error
+                    );
+                }
+
+
+                showMessage(
+                    'Правило успішно додано.'
+                );
+
+
+                document.getElementById(
+                    'sourceGroup'
+                ).value = '';
+
+
+                document.getElementById(
+                    'targetGroup'
+                ).value = '';
+
+
+                await loadRules();
+
+                await loadStatus();
+
+            } catch (error) {
+
+                showMessage(
+                    error.message,
+                    'error'
+                );
+            }
+        }
+
+
+        // ======================================
+        // ПРАВИЛА
+        // ======================================
+
+        async function loadRules() {
+
+            try {
+
+                const response =
+                    await fetch(
+                        '/api/rules'
+                    );
+
+
+                rules =
+                    await response.json();
+
+
+                renderRules();
+
+                await loadStatus();
+
+            } catch (error) {
+
+                console.error(
+                    error
+                );
+            }
+        }
+
+
+        function getGroup(
+            id
+        ) {
+
+            return groups.find(
+                group =>
+                    group.id === id
+            );
+        }
+
+
+        function renderRules() {
+
+            const container =
+                document.getElementById(
+                    'rulesList'
+                );
+
+
+            if (
+                !rules.length
+            ) {
+
+                container.innerHTML =
+                    '<div class="empty">Правил пересилання поки немає.</div>';
+
+                return;
+            }
+
+
+            container.innerHTML =
+                '';
+
+
+            rules.forEach(
+                rule => {
+
+                    const source =
+                        getGroup(
+                            rule.source
+                        );
+
+
+                    const target =
+                        getGroup(
+                            rule.target
+                        );
+
+
+                    const element =
+                        document.createElement(
+                            'div'
+                        );
+
+
+                    element.className =
+                        'rule';
+
+
+                    element.innerHTML = `
+
+                    <div class="rule-source">
+
+                        <div class="group-name">
+                            ${escapeHtml(
+                        source?.name ||
+                        'Невідома група'
+                    )}
+                        </div>
+
+                        <div class="group-members">
+
+                            ${source
+                            ? `👥 ${source.participants} учасників`
+                            : ''
+                        }
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="arrow">
+                        →
+                    </div>
+
+
+                    <div class="rule-target">
+
+                        <div class="group-name">
+                            ${escapeHtml(
+                            target?.name ||
+                            'Невідома група'
+                        )}
+                        </div>
+
+                        <div class="group-members">
+
+                            ${target
+                            ? `👥 ${target.participants} учасників`
+                            : ''
+                        }
+
+                        </div>
+
+                    </div>
+
+
+                    <div>
+
+                        <div
+                            class="
+                                rule-status
+                                ${rule.enabled
+                            ? 'status-enabled'
+                            : 'status-disabled'
+                        }
+                            "
+                        >
+
+                            ${rule.enabled
+                            ? '🟢 Увімкнено'
+                            : '⏸️ Призупинено'
+                        }
+
+                        </div>
+
+
+                        <div class="rule-actions">
+
+
+                            <button
+                                class="button-primary"
+                                onclick="openEditModal('${rule.id}')"
+                            >
+                                ✏️ Редагувати
+                            </button>
+
+
+                            <button
+                                class="${rule.enabled
+                            ? 'button-warning'
+                            : 'button-success'
+                        }"
+                                onclick="toggleRule('${rule.id}')"
+                            >
+
+                                ${rule.enabled
+                            ? '⏸️ Призупинити'
+                            : '▶️ Увімкнути'
+                        }
+
+                            </button>
+
+
+                            <button
+                                class="button-danger"
+                                onclick="deleteRule('${rule.id}')"
+                            >
+                                🗑️ Видалити
+                            </button>
+
+
+                        </div>
+
+                    </div>
+
+                `;
+
+
+                    container.appendChild(
+                        element
+                    );
+                }
+            );
+        }
+
+
+        // ======================================
+        // РЕДАГУВАННЯ
+        // ======================================
+
+        function openEditModal(
+            id
+        ) {
+
+            const rule =
+                rules.find(
+                    item =>
+                        item.id === id
+                );
+
+
+            if (!rule) {
+
+                return;
+            }
+
+
+            editingRuleId =
+                id;
+
+
+            fillSelect(
+                document.getElementById(
+                    'editSource'
+                ),
+                rule.source
+            );
+
+
+            fillSelect(
+                document.getElementById(
+                    'editTarget'
+                ),
+                rule.target
+            );
+
+
+            document.getElementById(
+                'editModal'
+            ).classList.add(
+                'active'
+            );
+        }
+
+
+        function closeEditModal() {
+
+            editingRuleId =
+                null;
+
+
+            document.getElementById(
+                'editModal'
+            ).classList.remove(
+                'active'
+            );
+        }
+
+
+        async function saveEditedRule() {
+
+            if (
+                !editingRuleId
+            ) {
+
+                return;
+            }
+
+
+            const source =
+                document.getElementById(
+                    'editSource'
+                ).value;
+
+
+            const target =
+                document.getElementById(
+                    'editTarget'
+                ).value;
+
+
+            if (
+                !source ||
+                !target
+            ) {
+
+                showMessage(
+                    'Оберіть обидві групи.',
+                    'error'
+                );
+
+                return;
+            }
+
+
+            if (
+                source === target
+            ) {
+
+                showMessage(
+                    'Групи не можуть бути однаковими.',
+                    'error'
+                );
+
+                return;
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/api/rules/${editingRuleId}`,
+                        {
+
+                            method:
+                                'PUT',
+
+                            headers: {
+                                'Content-Type':
+                                    'application/json'
+                            },
+
+                            body:
+                                JSON.stringify({
+                                    source,
+                                    target
+                                })
+
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    !response.ok
+                ) {
+
+                    throw new Error(
+                        data.error
+                    );
+                }
+
+
+                closeEditModal();
+
+
+                await loadRules();
+
+
+                showMessage(
+                    'Правило успішно змінено.'
+                );
+
+            } catch (error) {
+
+                showMessage(
+                    error.message,
+                    'error'
+                );
+            }
+        }
+
+
+        // ======================================
+        // УВІМКНЕННЯ / ПРИЗУПИНЕННЯ
+        // ======================================
+
+        async function toggleRule(
+            id
+        ) {
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/api/rules/${id}/toggle`,
+                        {
+                            method:
+                                'POST'
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    !response.ok
+                ) {
+
+                    throw new Error(
+                        data.error
+                    );
+                }
+
+
+                await loadRules();
+
+
+                showMessage(
+                    data.enabled
+                        ? 'Правило увімкнено.'
+                        : 'Правило призупинено.'
+                );
+
+            } catch (error) {
+
+                showMessage(
+                    error.message,
+                    'error'
+                );
+            }
+        }
+
+
+        // ======================================
+        // ВИДАЛЕННЯ
+        // ======================================
+
+        async function deleteRule(
+            id
+        ) {
+
+            const rule =
+                rules.find(
+                    item =>
+                        item.id === id
+                );
+
+
+            if (!rule) {
+
+                return;
+            }
+
+
+            const source =
+                getGroup(
+                    rule.source
+                )?.name ||
+                rule.source;
+
+
+            const target =
+                getGroup(
+                    rule.target
+                )?.name ||
+                rule.target;
+
+
+            const confirmed =
+                confirm(
+                    `Видалити правило?\n\n${source} → ${target}`
+                );
+
+
+            if (!confirmed) {
+
+                return;
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/api/rules/${id}`,
+                        {
+                            method:
+                                'DELETE'
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    !response.ok
+                ) {
+
+                    throw new Error(
+                        data.error
+                    );
+                }
+
+
+                await loadRules();
+
+
+                showMessage(
+                    'Правило видалено.'
+                );
+
+            } catch (error) {
+
+                showMessage(
+                    error.message,
+                    'error'
+                );
+            }
+        }
+
+
+        // ======================================
+        // ЗАХИСТ HTML
+        // ======================================
+
+        function escapeHtml(
+            value
+        ) {
+
+            return String(
+                value
+            )
+                .replaceAll(
+                    '&',
+                    '&amp;'
+                )
+                .replaceAll(
+                    '<',
+                    '&lt;'
+                )
+                .replaceAll(
+                    '>',
+                    '&gt;'
+                )
+                .replaceAll(
+                    '"',
+                    '&quot;'
+                )
+                .replaceAll(
+                    "'",
+                    '&#039;'
+                );
+        }
+
+        // ======================================
+            // СТАТИСТИКА
+            // ======================================
+
+            async function loadStatistics() {
+
+                try {
+
+                    const response =
+                        await fetch(
+                            '/api/statistics'
+                        );
+
+
+                    const data =
+                        await response.json();
+
+
+                    document.getElementById(
+                        'todayTotal'
+                    ).textContent =
+                        data.todayTotal;
+
+
+                    document.getElementById(
+                        'todaySuccessful'
+                    ).textContent =
+                        data.todaySuccessful;
+
+
+                    document.getElementById(
+                        'todayErrors'
+                    ).textContent =
+                        data.todayErrors;
+
+
+                    document.getElementById(
+                        'totalLogs'
+                    ).textContent =
+                        data.total;
+
+                } catch (error) {
+
+                    console.error(
+                        'Помилка завантаження статистики:',
+                        error
+                    );
+                }
+            }
+
+
+            // ======================================
+            // ЖУРНАЛ ПЕРЕСИЛАНЬ
+            // ======================================
+
+            async function loadLogs() {
+
+                try {
+
+                    const response =
+                        await fetch(
+                            '/api/logs?limit=50'
+                        );
+
+
+                    const logs =
+                        await response.json();
+
+
+                    renderLogs(
+                        logs
+                    );
+
+                } catch (error) {
+
+                    console.error(
+                        'Помилка завантаження журналу:',
+                        error
+                    );
+                }
+            }
+
+
+            // ======================================
+            // ВІДОБРАЖЕННЯ ЖУРНАЛУ
+            // ======================================
+
+            function renderLogs(
+                logs
+            ) {
+
+                const container =
+                    document.getElementById(
+                        'logsList'
+                    );
+
+
+                if (
+                    !logs.length
+                ) {
+
+                    container.innerHTML = `
+
+            <div class="empty">
+                Пересилань поки немає.
+            </div>
+
+        `;
+
+                    return;
+                }
+
+
+                container.innerHTML =
+                    '';
+
+
+                logs.forEach(
+                    log => {
+
+                        const element =
+                            document.createElement(
+                                'div'
+                            );
+
+
+                        element.className =
+                            'log-entry';
+
+
+                        const date =
+                            new Date(
+                                log.date
+                            );
+
+
+                        const dateText =
+                            date.toLocaleString(
+                                'uk-UA'
+                            );
+
+
+                        const status =
+                            log.status ===
+                            'success';
+
+
+                        element.innerHTML = `
+
+                <div class="log-header">
+
+                    <div class="${status
+                                ? 'log-success'
+                                : 'log-error'
+                            }">
+
+                        ${status
+                                ? '🟢 Успішно переслано'
+                                : '🔴 Помилка пересилання'
+                            }
+
+                    </div>
+
+
+                    <div class="log-time">
+
+                        ${escapeHtml(
+                                dateText
+                            )}
+
+                    </div>
+
+                </div>
+
+
+                <div class="log-route">
+
+                    ${escapeHtml(
+                                log.sourceName
+                            )}
+
+                    →
+
+                    ${escapeHtml(
+                                log.targetName
+                            )}
+
+                </div>
+
+
+                <div class="log-sender">
+
+                    👤 Відправник:
+
+                    ${escapeHtml(
+                                log.sender
+                            )}
+
+                </div>
+
+
+                <div class="log-text">
+
+                    ${escapeHtml(
+                                log.text
+                            )}
+
+                </div>
+
+
+                ${log.error
+                                ? `
+                            <div class="log-error">
+                                ${escapeHtml(
+                                    log.error
+                                )}
+                            </div>
+                          `
+                                : ''
+                            }
+
+            `;
+
+
+                        container.appendChild(
+                            element
+                        );
+                    }
+                );
+            }
+
+        // ======================================
+        // ПОЧАТКОВИЙ ЗАПУСК
+        // ======================================
+
+        async function initialize() {
+
+            await loadGroups();
+
+            await loadRules();
+
+            await loadStatus();
+
+            await loadStatistics();
+
+            await loadLogs();
+        }
+
+
+        initialize();
+
+
+        // Оновлення статусу кожні 5 секунд
+
+        setInterval(
+            loadStatus,
+            5000
+        );
+
+        // Оновлення статистики
+            // кожні 10 секунд
+
+         setInterval(
+            loadStatistics,
+            10000
+        );
+
+        // Оновлення журналу
+            // кожні 10 секунд
+
+         setInterval(
+             loadLogs,
+             10000
+        );
+
+
+        // Закриття модального вікна
+        // при натисканні поза ним
+
+        document
+            .getElementById(
+                'editModal'
+            )
+            .addEventListener(
+                'click',
+                event => {
+
+                    if (
+                        event.target.id ===
+                        'editModal'
+                    ) {
+
+                        closeEditModal();
+                    }
+                }
+            );
+
+    </script>
+
+
+</body>
+
+</html>
