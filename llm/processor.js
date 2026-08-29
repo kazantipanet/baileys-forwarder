@@ -22,6 +22,8 @@ const PROCESSING_MODES = {
     LLM_TEMPLATE: 'llm_template'
 };
 
+const DEFAULT_CONFIDENCE_THRESHOLD = 0.85;
+
 
 /**
  * Обробляє повідомлення відповідно до налаштувань правила.
@@ -98,6 +100,7 @@ async function processMessage({
                         'Створи нове унікальне повідомлення',
                         'на основі вхідного тексту.',
                         'Не додавай неперевірені факти.',
+                        'Не змінюй цифри, назви, місця, час або інші конкретні дані.',
                         'Зберігай зміст та ключові факти.',
                         'Відповідай українською мовою.',
                         'Не пояснюй свою роботу.',
@@ -166,6 +169,11 @@ async function processMessage({
                 ? processing.templates
                 : [];
 
+        if (templates.length === 0) {
+            throw new Error(
+                'Для режиму llm_template не задано жодного шаблону.'
+            );
+        }
 
         const result =
             await classifyTemplate({
@@ -185,44 +193,103 @@ async function processMessage({
                     processing.apiKey
             });
 
+        const confidenceThreshold = Math.max(
+            0,
+            Math.min(
+                1,
+                Number(
+                    processing.confidenceThreshold ??
+                    DEFAULT_CONFIDENCE_THRESHOLD
+                )
+            )
+        );
 
-        if (
-            !result.template
-        ) {
+        const hasConfidentTemplate =
+            Boolean(result.template) &&
+            result.confidence >= confidenceThreshold;
 
+        if (hasConfidentTemplate) {
             return {
-                action: 'fallback',
+                action: 'send',
                 mode,
-                text,
+                text:
+                    result.template.text,
+
+                templateId:
+                    result.template.id,
+
+                templateName:
+                    result.template.name,
+
                 confidence:
                     result.confidence,
-                reason:
-                    'LLM не знайшла відповідний шаблон.'
+
+                confidenceThreshold,
+
+                model:
+                    result.model,
+
+                responseId:
+                    result.responseId
             };
         }
 
+        // За замовчуванням низька впевненість не призводить
+        // до пересилання оригінального повідомлення.
+        // Натомість генеруємо новий текст через LLM.
+        const fallbackMode =
+            processing.fallbackMode ||
+            PROCESSING_MODES.LLM_GENERATE;
 
-        return {
-            action: 'send',
-            mode,
-            text:
-                result.template.text,
+        if (
+            fallbackMode ===
+            PROCESSING_MODES.LLM_GENERATE
+        ) {
+            const generated =
+                await generateText({
+                    input: text,
+                    instructions:
+                        processing.fallbackInstructions ||
+                        [
+                            'Створи коротке унікальне повідомлення',
+                            'на основі вхідного тексту.',
+                            'Не вигадуй і не змінюй факти.',
+                            'Не змінюй цифри, назви, місця, час або інші конкретні дані.',
+                            'Відповідай українською мовою.',
+                            'Поверни тільки готове повідомлення.'
+                        ].join(' '),
+                    model: processing.model,
+                    apiKey: processing.apiKey
+                });
 
-            templateId:
-                result.template.id,
+            return {
+                action: 'send',
+                mode,
+                fallbackMode,
+                text: generated.text,
+                confidence: result.confidence,
+                confidenceThreshold,
+                templateId: result.template?.id || null,
+                model: generated.model,
+                responseId: generated.responseId
+            };
+        }
 
-            templateName:
-                result.template.name,
+        if (fallbackMode === 'skip') {
+            return {
+                action: 'skip',
+                mode,
+                text: null,
+                confidence: result.confidence,
+                confidenceThreshold,
+                reason:
+                    'Немає шаблону з достатньою впевненістю LLM.'
+            };
+        }
 
-            confidence:
-                result.confidence,
-
-            model:
-                result.model,
-
-            responseId:
-                result.responseId
-        };
+        throw new Error(
+            `Невідомий fallbackMode для llm_template: ${fallbackMode}`
+        );
     }
 
 
@@ -238,5 +305,6 @@ async function processMessage({
 
 module.exports = {
     PROCESSING_MODES,
+    DEFAULT_CONFIDENCE_THRESHOLD,
     processMessage
 };
