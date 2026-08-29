@@ -1,6 +1,8 @@
 const OpenAI = require('openai');
 
-const DEFAULT_MODEL = process.env.OPENAI_MODEL || 'gpt-5.6-luna';
+// Модель задається через OPENAI_MODEL.
+// Не зберігаємо назву моделі жорстко в коді, щоб її можна було змінити без редагування модуля.
+const DEFAULT_MODEL = process.env.OPENAI_MODEL || 'gpt-5';
 const DEFAULT_TIMEOUT_MS = Number(process.env.OPENAI_TIMEOUT_MS || 30000);
 
 let client = null;
