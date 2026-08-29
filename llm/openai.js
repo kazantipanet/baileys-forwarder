@@ -1,3 +1,4 @@
+require('dotenv').config();
 const OpenAI = require('openai');
 
 // Модель задається через OPENAI_MODEL.
