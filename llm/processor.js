@@ -21,13 +21,21 @@ const PROCESSING_MODES = {
     LLM_TEMPLATE: 'llm_template'
 };
 
+const OTHER_TEMPLATE_ID = 'other';
 const DEFAULT_CONFIDENCE_THRESHOLD = 0.85;
 
-async function processMessage({ text, processing = {} }) {
+async function processMessage({
+    text,
+    processing = {}
+}) {
     const mode = processing.mode || PROCESSING_MODES.FORWARD;
 
     if (mode === PROCESSING_MODES.FORWARD) {
-        return { action: 'forward', mode, text };
+        return {
+            action: 'forward',
+            mode,
+            text
+        };
     }
 
     if (!text || !String(text).trim()) {
@@ -41,15 +49,17 @@ async function processMessage({ text, processing = {} }) {
     if (mode === PROCESSING_MODES.LLM_GENERATE) {
         const result = await generateText({
             input: text,
-            instructions: processing.instructions || [
-                'Створи нове унікальне повідомлення на основі вхідного тексту.',
-                'Не додавай неперевірені факти.',
-                'Не змінюй цифри, назви, місця, час або інші конкретні дані.',
-                'Зберігай зміст та ключові факти.',
-                'Відповідай українською мовою.',
-                'Не пояснюй свою роботу.',
-                'Поверни лише готовий текст повідомлення.'
-            ].join(' '),
+            instructions:
+                processing.instructions ||
+                [
+                    'Створи нове унікальне повідомлення на основі вхідного тексту.',
+                    'Не додавай неперевірені факти.',
+                    'Не змінюй цифри, назви, місця, час або інші конкретні дані.',
+                    'Зберігай зміст та ключові факти.',
+                    'Відповідай українською мовою.',
+                    'Не пояснюй свою роботу.',
+                    'Поверни лише готовий текст повідомлення.'
+                ].join(' '),
             model: processing.model,
             apiKey: processing.apiKey
         });
@@ -67,7 +77,12 @@ async function processMessage({ text, processing = {} }) {
         if (!processing.template) {
             throw new Error('Для режиму template не задано шаблон.');
         }
-        return { action: 'send', mode, text: processing.template };
+
+        return {
+            action: 'send',
+            mode,
+            text: processing.template
+        };
     }
 
     if (mode === PROCESSING_MODES.LLM_TEMPLATE) {
@@ -100,15 +115,13 @@ async function processMessage({ text, processing = {} }) {
             )
         );
 
-        // "other" — це класифікаційний результат, а не готовий шаблон.
-        // Він завжди передає керування fallback-сценарію.
-        const isOtherTemplate = result.template?.id === 'other';
-        const hasConfidentTemplate =
+        const isOther = result.template?.id === OTHER_TEMPLATE_ID;
+        const hasConfidentSpecializedTemplate =
             Boolean(result.template) &&
-            !isOtherTemplate &&
+            !isOther &&
             result.confidence >= confidenceThreshold;
 
-        if (hasConfidentTemplate) {
+        if (hasConfidentSpecializedTemplate) {
             return {
                 action: 'send',
                 mode,
@@ -129,13 +142,15 @@ async function processMessage({ text, processing = {} }) {
         if (fallbackMode === PROCESSING_MODES.LLM_GENERATE) {
             const generated = await generateText({
                 input: text,
-                instructions: processing.fallbackInstructions || [
-                    'Створи коротке унікальне повідомлення на основі вхідного тексту.',
-                    'Не вигадуй і не змінюй факти.',
-                    'Не змінюй цифри, назви, місця, час або інші конкретні дані.',
-                    'Відповідай українською мовою.',
-                    'Поверни тільки готове повідомлення.'
-                ].join(' '),
+                instructions:
+                    processing.fallbackInstructions ||
+                    [
+                        'Створи коротке унікальне повідомлення на основі вхідного тексту.',
+                        'Не вигадуй і не змінюй факти.',
+                        'Не змінюй цифри, назви, місця, час або інші конкретні дані.',
+                        'Відповідай українською мовою.',
+                        'Поверни тільки готове повідомлення.'
+                    ].join(' '),
                 model: processing.model,
                 apiKey: processing.apiKey
             });
@@ -148,6 +163,7 @@ async function processMessage({ text, processing = {} }) {
                 confidence: result.confidence,
                 confidenceThreshold,
                 templateId: result.template?.id || null,
+                templateName: result.template?.name || null,
                 model: generated.model,
                 responseId: generated.responseId
             };
@@ -160,7 +176,10 @@ async function processMessage({ text, processing = {} }) {
                 text: null,
                 confidence: result.confidence,
                 confidenceThreshold,
-                reason: 'Немає спеціалізованого шаблону з достатньою впевненістю LLM.'
+                templateId: result.template?.id || null,
+                reason: isOther
+                    ? 'Повідомлення не відповідає спеціалізованим шаблонам.'
+                    : 'Немає шаблону з достатньою впевненістю LLM.'
             };
         }
 
@@ -174,6 +193,7 @@ async function processMessage({ text, processing = {} }) {
 
 module.exports = {
     PROCESSING_MODES,
+    OTHER_TEMPLATE_ID,
     DEFAULT_CONFIDENCE_THRESHOLD,
     processMessage
 };
