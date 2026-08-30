@@ -10,3 +10,8 @@ processed_messages.json
 index_backup.js
 private/
 
+
+# Local backup / temporary source files
+*.backup.js
+*.before-*.js
+auth_info_backup/
