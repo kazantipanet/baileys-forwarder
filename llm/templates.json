@@ -1,26 +1,31 @@
-[
-  {
-    "id": "air_alert",
-    "name": "Повітряна тривога",
-    "description": "Повідомлення про оголошення, початок або наявність повітряної тривоги. Ознаки: оголошено повітряну тривогу, повітряна тривога в області/районі/місті, сигнал повітряної тривоги.",
-    "text": "⚠️ Увага! Повітряна тривога. Просимо перебувати в безпечному місці та стежити за офіційними повідомленнями."
-  },
-  {
-    "id": "air_alert_end",
-    "name": "Відбій повітряної тривоги",
-    "description": "Повідомлення про завершення або відбій повітряної тривоги. Ознаки: відбій повітряної тривоги, тривогу скасовано, небезпека минула.",
-    "text": "✅ Увага! Повітряна тривога завершена. Можна повернутися до звичайного режиму роботи."
-  },
-  {
-    "id": "important_information",
-    "name": "Важлива інформація",
-    "description": "Важливе службове або організаційне повідомлення, яке потребує уваги отримувачів і стосується конкретної службової або організаційної дії, зміни, рішення чи оголошення. Не використовуй цей сценарій лише тому, що повідомлення здається важливим.",
-    "text": "🔴 Важлива інформація. Просимо звернути увагу на це повідомлення."
-  },
-  {
-    "id": "other",
-    "name": "Інше",
-    "description": "Повідомлення не відповідає жодному зі спеціалізованих сценаріїв. Використовуй цей сценарій, якщо немає достатніх підстав віднести повідомлення до air_alert, air_alert_end або important_information.",
-    "text": null
-  }
-]
+{
+  "templates": [
+    {"id":"reactive_uav_direction","name":"Реактивний БпЛА — напрямок","category":"uav","variables":["destination"],"template":"Реактивний БпЛА в бік міста {{destination}}"},
+    {"id":"reactive_uav_group_direction","name":"Група реактивних БпЛА — напрямок","category":"uav","variables":["destination"],"template":"Група реактивних БпЛА в бік міста {{destination}}"},
+    {"id":"reactive_uav_passed_city","name":"Група реактивних БпЛА — пройшла місто","category":"uav","variables":["passed_location","destination"],"template":"Група реактивних БпЛА пройшла місто {{passed_location}} рухається в бік {{destination}}"},
+    {"id":"reactive_uav_along_route","name":"Група реактивних БпЛА — вздовж міста","category":"uav","variables":["from_location","destination"],"template":"Група реактивних БпЛА вздовж міста {{from_location}} в бік {{destination}}"},
+    {"id":"reactive_uav_direction_unknown","name":"Група реактивних БпЛА — напрямок невідомий","category":"uav","variables":[],"template":"Вихід групи реактивних БпЛА в АЧМ, напрямок поки не відомий"},
+    {"id":"tactical_aviation_black_sea","name":"Тактична авіація — акваторія","category":"aviation","variables":[],"template":"Тактична авіація в акваторії Чорного моря"},
+    {"id":"port_threat_confirmed","name":"Порт — підтверджена інформація про загрозу","category":"port","variables":["threat_type","quantity","direction","eta"],"template":"{{threat_type}}, в кількості {{quantity}}, підтверджений напрямок морський порт {{direction}}, орієнтовний час підльоту {{eta}}"},
+    {"id":"port_threat_preliminary","name":"Порт — попередня інформація про загрозу","category":"port","variables":["threat_type","direction","eta"],"template":"{{threat_type}}, попередній напрямок морський порт {{direction}}, орієнтовний час підльоту {{eta}}"},
+    {"id":"uav_course_change","name":"Зміна курсу БпЛА","category":"uav","variables":["from_location","destination"],"template":"Зміна курсу БпЛА з міста {{from_location}} в бік {{destination}}"},
+    {"id":"air_alert_end","name":"Відбій повітряної тривоги","category":"alert","variables":[],"template":"Відбій повітряної тривоги"},
+    {"id":"ballistic_direction","name":"Балістика — напрямок","category":"ballistic","variables":["destination"],"template":"Балістика в бік {{destination}}"},
+    {"id":"ballistic_direction_unknown","name":"Балістика — напрямок невідомий","category":"ballistic","variables":[],"template":"Вихід балістики, напрямок поки не відомий"},
+    {"id":"cruise_missile_direction","name":"Крилаті ракети — напрямок","category":"missile","variables":["destination"],"template":"Крилаті ракети в бік {{destination}}"},
+    {"id":"cruise_missile_group","name":"Група крилатих ракет","category":"missile","variables":["quantity","destination"],"template":"Група крилатих ракет, в кількості {{quantity}}, в бік {{destination}}"},
+    {"id":"uav_group_direction","name":"Група БпЛА — напрямок","category":"uav","variables":["destination"],"template":"Група БпЛА в бік {{destination}}"},
+    {"id":"uav_direction_unknown","name":"БпЛА — напрямок невідомий","category":"uav","variables":[],"template":"БпЛА, напрямок поки не відомий"},
+    {"id":"uav_launch","name":"Пуск БпЛА","category":"uav","variables":[],"template":"Зафіксовано пуск БпЛА"},
+    {"id":"missile_launch","name":"Пуск ракет","category":"missile","variables":[],"template":"Зафіксовано пуск ракет"},
+    {"id":"aircraft_activity","name":"Активність авіації","category":"aviation","variables":[],"template":"Активність авіації"},
+    {"id":"aircraft_direction","name":"Авіація — напрямок","category":"aviation","variables":["destination"],"template":"Авіація в бік {{destination}}"},
+    {"id":"port_threat","name":"Порт — загроза","category":"port","variables":["direction"],"template":"Загроза в напрямку морського порту {{direction}}"},
+    {"id":"port_alert","name":"Порт — попередження","category":"port","variables":["direction"],"template":"Попередження щодо напрямку морського порту {{direction}}"},
+    {"id":"air_alert_start","name":"Початок повітряної тривоги","category":"alert","variables":[],"template":"Повітряна тривога"},
+    {"id":"air_alert_update","name":"Оновлення повітряної тривоги","category":"alert","variables":[],"template":"Оновлення щодо повітряної тривоги"},
+    {"id":"target_destroyed","name":"Ціль знищена","category":"result","variables":[],"template":"Ціль знищена"},
+    {"id":"target_hit","name":"Ціль уражена","category":"result","variables":[],"template":"Ціль уражена"},
+    {"id":"general_threat","name":"Загальна загроза","category":"general","variables":["threat_type"],"template":"Загроза: {{threat_type}}"}
+  ]
+}
