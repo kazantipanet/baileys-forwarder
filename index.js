@@ -14,6 +14,9 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
+const {
+    processMessage
+} = require('./llm/processor');
 
 // ==================================================
 // НАЛАШТУВАННЯ СИСТЕМИ
@@ -635,6 +638,23 @@ async function forwardMessage(
         );
 
 
+    // ==================================================
+    // V2: ОБРОБЛЯЄМО ТІЛЬКИ ТЕКСТОВІ ПОВІДОМЛЕННЯ
+    // ==================================================
+
+    if (
+        messageType !== 'conversation' &&
+        messageType !== 'extendedTextMessage'
+    ) {
+
+        console.log(
+            '⏭️ SKIP — нетекстове повідомлення:',
+            messageType
+        );
+
+        return;
+    }
+
     // Отримуємо назви груп
     const sourceGroup =
         findGroup(
@@ -651,17 +671,76 @@ async function forwardMessage(
     try {
 
         // ------------------------------------------
-        // ПЕРЕСИЛАННЯ
+        // LLM ОБРОБКА ТА ФОРМУВАННЯ ПОВІДОМЛЕННЯ
+        // ------------------------------------------
+
+        console.log(
+            '\n🤖 Передаю повідомлення до LLM...'
+        );
+
+        console.log(
+            'Вхідний текст:',
+            text
+        );
+
+        const processed =
+            await processMessage(
+                text
+            );
+
+        console.log(
+            'LLM результат:'
+        );
+
+        console.dir(
+            processed,
+            {
+                depth: null
+            }
+        );
+
+        // Якщо processor вирішив не відправляти
+        if (
+            processed.action !== 'send'
+        ) {
+
+            console.log(
+                '⏭️ LLM не рекомендує відправляти повідомлення.'
+            );
+
+            return;
+        }
+
+        // Готовий текст для WhatsApp
+        const outputText =
+            processed.text;
+
+        if (
+            !outputText ||
+            !String(outputText).trim()
+        ) {
+
+            throw new Error(
+                'LLM Processor повернув порожній текст.'
+            );
+        }
+
+        console.log(
+            '📤 Фінальний текст:',
+            outputText
+        );
+
+        // ------------------------------------------
+        // ВІДПРАВЛЕННЯ СФОРМОВАНОГО ТЕКСТУ
         // ------------------------------------------
 
         await whatsappSocket.sendMessage(
             rule.target,
             {
-                forward:
-                    message
+                text:
+                    outputText
             }
         );
-
 
         // ------------------------------------------
         // ФІКСУЄМО УСПІШНЕ ПЕРЕСИЛАННЯ
@@ -1234,8 +1313,7 @@ async function startWhatsApp() {
 
 
                     console.log(
-                        `📋 Налаштовано правил: ${
-                            config.forwarding_rules.length
+                        `📋 Налаштовано правил: ${config.forwarding_rules.length
                         }`
                     );
 
@@ -1332,7 +1410,7 @@ async function startWhatsApp() {
                                         await startWhatsApp();
 
                                     } catch (
-                                        error
+                                    error
                                     ) {
 
                                         console.error(
@@ -1370,7 +1448,7 @@ async function startWhatsApp() {
                     );
 
                 } catch (
-                    error
+                error
                 ) {
 
                     console.error(
@@ -1386,7 +1464,7 @@ async function startWhatsApp() {
             false;
 
     } catch (
-        error
+    error
     ) {
 
         whatsappStarting =
@@ -1558,9 +1636,9 @@ app.post(
                 .some(
                     rule =>
                         rule.source ===
-                            source &&
+                        source &&
                         rule.target ===
-                            target
+                        target
                 );
 
 
@@ -1689,11 +1767,11 @@ app.put(
                 .some(
                     item =>
                         item.id !==
-                            req.params.id &&
+                        req.params.id &&
                         item.source ===
-                            source &&
+                        source &&
                         item.target ===
-                            target
+                        target
                 );
 
 
