@@ -7,9 +7,9 @@ processed_messages.json
 .DS_Store
 .env
 .env.*
+!.env.example
 index_backup.js
 private/
-
 
 # Local backup / temporary source files
 *.backup.js
